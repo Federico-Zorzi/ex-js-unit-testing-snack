@@ -2,17 +2,11 @@
 const getInitials = (name) =>
   name
     .split(/\s+/)
-    .map((w) => w[0])
+    .filter((w) => w !== "")
+    .map((w) => w[0].toUpperCase())
     .join("");
 
-/* Snack 2 - 4 */
-const createSlug2 = (str) => str.toLowerCase();
-
-/* Snack 3 */
-const average = (nums) =>
-  nums.reduce((acc, curr) => acc + curr, 0) / nums.length;
-
-/* Snack 4 - 6 - 10 */
+/* Snack 2 - 4 - 6 - 10 */
 const createSlug = (str, postList = []) => {
   if (!str.trim()) throw new Error("Il titolo è vuoto");
   let slug = str.toLowerCase().replace(/ /g, "-");
@@ -24,21 +18,37 @@ const createSlug = (str, postList = []) => {
   return slug;
 };
 
+/* Snack 3 */
+const average = (nums) => {
+  nums.forEach((n) => {
+    if (isNaN(n)) throw new Error("Avarage vuole solo numeri");
+  });
+
+  return nums.reduce((acc, curr) => acc + curr, 0) / nums.length;
+};
+
 /* Snack 5 */
 const isPalindrome = (str) => str === str.split("").reverse().join("");
 
-/* Snack 6 */
-
 /* Snack 7 */
-const findPostById = (arr, id) => arr.find((p) => p.id === id);
+const findPostById = (posts, id) => {
+  if (isNaN(id)) throw new Error(`L'id ${id} non è valido`);
+
+  posts.forEach((p) => {
+    if (p.id === undefined || p.title === undefined || p.slug === undefined)
+      throw new Error(`L'id ${id} non è valido`);
+  });
+
+  return posts.find((p) => p.id === id);
+};
 
 /* Snack 8 - 9 */
 const addPost = (postsList, newPost) => {
   if (postsList.some((p) => p.id === newPost.id))
-    throw new Error("Id duplicato, non è possibile aggiungere il nuovo post");
+    throw new Error("L'id è già esistente");
 
   if (postsList.some((p) => p.slug === newPost.slug))
-    throw new Error("Slug duplicato, non è possibile aggiungere il nuovo post");
+    throw new Error("Lo slug è già esistente");
 
   return [...postsList, newPost];
 };
@@ -49,7 +59,6 @@ const removePost = (postsList, id) => {
 
 module.exports = {
   getInitials,
-  createSlug2,
   average,
   createSlug,
   isPalindrome,

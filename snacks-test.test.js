@@ -1,6 +1,5 @@
 const {
   getInitials,
-  createSlug2,
   createSlug,
   average,
   isPalindrome,
@@ -8,20 +7,53 @@ const {
   addPost,
   removePost,
 } = require("./snacks-test");
-console.log(getInitials);
 
-describe("initials", () => {
+let posts;
+beforeEach(() => {
+  posts = [
+    {
+      id: 1,
+      title: "Introduzione a JavaScript",
+    },
+    {
+      id: 2,
+      title: "Guida a React per principianti",
+    },
+    {
+      id: 3,
+      title: "Node.js e Express: Creare un server",
+    },
+    {
+      id: 4,
+      title: "CSS Grid vs Flexbox: Quale usare?",
+    },
+    {
+      id: 5,
+      title: "Le migliori pratiche per il backend",
+    },
+  ].map((p) => ({ ...p, slug: createSlug(p.title) }));
+});
+afterEach(() => {
+  posts = [];
+});
+
+describe("Manipolazione di stringhe", () => {
   /* Snack 1 */
   test("La funzione getInitials restituisce le iniziali di un nome completo.", () => {
     expect(getInitials("Federico Zorzi")).toBe("FZ");
     expect(getInitials("Paolo Rossi")).toBe("PR");
   });
+
+  /* Snack 5 */
+  test("La funzione isPalindrome verifica se una stringa è un palindromo.", () => {
+    expect(isPalindrome("otto")).toBeTruthy();
+  });
 });
 
-describe("slug", () => {
+describe("Generatore slug", () => {
   /* Snack 2 */
   test("La funzione createSlug restituisce una stringa in lowercase.", () => {
-    expect(createSlug2("Stringa Di Prova")).toBe("stringa di prova");
+    expect(createSlug("Stringa Di Prova")).toBe("stringa-di-prova");
   });
 
   /* Snack 4 */
@@ -34,51 +66,20 @@ describe("slug", () => {
     expect(() => createSlug("")).toThrow();
     expect(() => createSlug("  ")).toThrow();
   });
+
+  /* Snack 10 */
+  test("Se viene passato un array di post come secondo argomento, la funzione createSlug incrementa di 1 se lo slug esiste già.", () => {
+    expect(createSlug("Guida a React per principianti", posts)).toBe(
+      "guida-a-react-per-principianti-1"
+    );
+  });
 });
 
-describe("avarage", () => {
+describe("Operazioni su array", () => {
   /* Snack 3 */
   test("La funzione average calcola la media aritmetica di un array di numeri.", () => {
     expect(average([1, 2, 3, 4, 5])).toBe(3);
     expect(average([7, 8, 9, 10])).toBe(8.5);
-  });
-});
-
-describe("palindrome", () => {
-  /* Snack 5 */
-  test("La funzione isPalindrome verifica se una stringa è un palindromo.", () => {
-    expect(isPalindrome("otto")).toBeTruthy();
-  });
-});
-
-describe("posts", () => {
-  let posts;
-  beforeEach(() => {
-    posts = [
-      {
-        id: 1,
-        title: "Introduzione a JavaScript",
-      },
-      {
-        id: 2,
-        title: "Guida a React per principianti",
-      },
-      {
-        id: 3,
-        title: "Node.js e Express: Creare un server",
-      },
-      {
-        id: 4,
-        title: "CSS Grid vs Flexbox: Quale usare?",
-      },
-      {
-        id: 5,
-        title: "Le migliori pratiche per il backend",
-      },
-    ].map((p) => ({ ...p, slug: createSlug(p.title) }));
-  });
-  afterEach(() => {
-    posts = [];
   });
 
   /* Snack 7 */
@@ -126,21 +127,14 @@ describe("posts", () => {
         title: "Nuovo post",
         slug: "nuovo-post",
       })
-    ).toThrow();
+    ).toThrow("L'id è già esistente");
 
     expect(() =>
       addPost(posts, {
-        id: 5,
+        id: 8,
         title: "Nuovo post",
-        slug: "Introduzione a JavaScript",
+        slug: "introduzione-a-javascript",
       })
-    ).toThrow();
-  });
-
-  /* Snack 10 */
-  test("Se viene passato un array di post come secondo argomento, la funzione createSlug incrementa di 1 se lo slug esiste già.", () => {
-    expect(createSlug("Guida a React per principianti", posts)).toBe(
-      "guida-a-react-per-principianti-1"
-    );
+    ).toThrow("Lo slug è già esistente");
   });
 });
